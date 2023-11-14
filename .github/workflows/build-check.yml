@@ -27,6 +27,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Filter paths
       uses: lostick/path-filtering-action@v0.5.0
+      with:
+        config_file: .github/build-check-filter.yml
     - id: setenv
       name: Set environment
       run: echo "variable=${{env.DIFF_DETECTED}}" >> "$GITHUB_OUTPUT"
