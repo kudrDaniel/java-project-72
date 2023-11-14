@@ -7,7 +7,7 @@ page = page,
 content = @`
     <div class="mx-auto p-4 py-md-5">
         <main>
-            <h1>Hello world!</h1>
+            <h1>Hello bibs!</h1>
         </main>
     </div>
 `
