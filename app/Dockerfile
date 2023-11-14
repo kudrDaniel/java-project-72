@@ -20,4 +20,6 @@ COPY . .
 
 RUN gradle installDist
 
+ENV PORT=$PORT
+
 CMD ./build/install/app/bin/app
