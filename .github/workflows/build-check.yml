@@ -6,7 +6,6 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
 name: Java CI
-
 on:
   push:
     branches:
@@ -18,7 +17,6 @@ on:
      - '**'
     tags:
      - '**'
-
 jobs:
   filtering:
     name: Check if files are changed
@@ -34,18 +32,10 @@ jobs:
     - id: setenv
       name: Set environment
       run: echo "variable=${{env.DIFF_DETECTED}}" >> "$GITHUB_OUTPUT"
-  test:
-    name: test
-    needs: filtering
-    runs-on: ubuntu-latest
-    steps:
-    - name: test
-      run: echo ${{needs.filtering.outputs.output1}}
-    
   build:
     name: Build and make test coverage report
     needs: filtering
-    if: needs.filtering.outputs.output1 == 'false'
+    if: needs.filtering.outputs.output1 == 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
