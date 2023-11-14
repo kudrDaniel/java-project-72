@@ -8,8 +8,8 @@ public class Environments {
 
     public static Integer getApplicationPort() {
         if (applicationPort == null) {
-            var env = System.getenv("PA_PORT");
-            var parsed = 7080;
+            var env = System.getenv("PORT");
+            var parsed = 8080;
             try {
                 parsed = Integer.parseInt(env);
             } catch (NumberFormatException e) {
