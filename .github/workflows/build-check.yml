@@ -33,7 +33,7 @@ jobs:
         config_file: .github/build-check-filter.yml
     - id: setenv
       name: Set environment
-      run: echo "variable=env.DIFF_DETECTED" >> "$GITHUB_OUTPUT"
+      run: echo "variable=${{env.DIFF_DETECTED}}" >> "$GITHUB_OUTPUT"
   test:
     name: test
     needs: filtering
@@ -45,7 +45,7 @@ jobs:
   build:
     name: Build and make test coverage report
     needs: filtering
-    if: needs.filtering.outputs.output1 == 'true'
+    if: needs.filtering.outputs.output1 == 'false'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
