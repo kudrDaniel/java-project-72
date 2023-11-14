@@ -17,6 +17,7 @@ public class Environments {
                 parsed = Integer.parseInt(env);
             } catch (NumberFormatException e) {
                 log.error(e.getMessage());
+                log.info("Set application port to default \"8080\"");
             }
             APPLICATION_PORT = parsed;
         }
