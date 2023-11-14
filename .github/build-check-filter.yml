@@ -1,0 +1,9 @@
+#
+# This file uses with path-filtering-action
+#
+
+rules:
+- paths:
+  - ./app
+    ./.gitignore
+    ./Makefile

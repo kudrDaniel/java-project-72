@@ -1,0 +1,11 @@
+/**/.idea/
+
+/**/.gradle/
+
+/**/build/
+
+/**/logs/
+
+/**/jte-classes/
+
+*.class

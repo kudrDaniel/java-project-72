@@ -1,0 +1,62 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI
+
+on:
+  push:
+    branches:
+    - '**'
+    tags:
+     - '**'
+  pull_request:
+    branches:
+     - '**'
+    tags:
+     - '**'
+
+jobs:
+  filtering:
+    name: Check what files are changed
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{steps.setenv.outputs.variable}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Filter paths
+      uses: lostick/path-filtering-action@main
+      with:
+        config_file: .github/build-check-filter.yml
+    - name: Set variable
+      id: setvar
+      run: echo "variable=env.DIFF_DETECTED" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build and make test coverage report
+    needs: filtering
+    if: needs.filtering.outputs.output1 == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 20.0.2
+      uses: actions/setup-java@v3.12.0
+      with:
+        java-version: '20.0.2'
+        distribution: 'oracle'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2.7.0
+      with:
+          arguments: build
+          build-root-directory: app
+    - name: Report test coverage to codeclimate
+      uses: paambaati/codeclimate-action@v3.0.0
+      env:
+           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+           JACOCO_SOURCE_PATH: app/src/main/java
+      with:
+           coverageCommand: make report
+           coverageLocations: ${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
