@@ -33,7 +33,7 @@ jobs:
         config_file: .github/build-check-filter.yml
     - name: Set variable
       id: setvar
-      run: echo "variable=${env.DIFF_DETECTED}" >> "$GITHUB_OUTPUT"
+      run: echo "variable=${{env.DIFF_DETECTED}}" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build and make test coverage report
