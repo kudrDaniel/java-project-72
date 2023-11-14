@@ -4,6 +4,7 @@
 
 rules:
 - paths:
-  - app
+  - ./
+    app/
     .gitignore
     Makefile
