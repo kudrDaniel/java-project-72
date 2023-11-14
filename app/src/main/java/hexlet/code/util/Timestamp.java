@@ -9,10 +9,9 @@ public final class Timestamp {
         var now = new Date(System.currentTimeMillis());
         var cal = Calendar.getInstance();
         cal.setTime(FROM);
-        int fromYear, toYear;
-        fromYear = cal.get(Calendar.YEAR);
+        int fromYear = cal.get(Calendar.YEAR);
         cal.setTime(now);
-        toYear = cal.get(Calendar.YEAR);
+        int toYear = cal.get(Calendar.YEAR);
         return fromYear + " - " + toYear;
     }
 }
