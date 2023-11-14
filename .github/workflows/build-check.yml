@@ -22,20 +22,22 @@ jobs:
     name: Check if files are changed
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{steps.setenv.outputs.variable}}
+      changes: ${{steps.filter.outputs.src}}
     steps:
     - uses: actions/checkout@v3
     - name: Filter paths
-      uses: lostick/path-filtering-action@v0.5.0
+      uses: dorny/paths-filter@v2
+      id: filter
       with:
-        config_file: .github/build-check-filter.yml
-    - id: setenv
-      name: Set environment
-      run: echo "variable=${{env.DIFF_DETECTED}}" >> "$GITHUB_OUTPUT"
+        filters: |
+          src:
+            - './app/**'
+            - './.gitignore'
+            - './Makefile'
   build:
     name: Build and make test coverage report
     needs: filtering
-    if: needs.filtering.outputs.output1 == 'true'
+    if: needs.filtering.outputs.changes == 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
