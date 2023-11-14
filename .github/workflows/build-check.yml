@@ -31,10 +31,17 @@ jobs:
       uses: lostick/path-filtering-action@v0.5.0
       with:
         config_file: .github/build-check-filter.yml
-    - name: Set environment
-      id: setenv
+    - id: setenv
+      name: Set environment
       run: echo "variable=env.DIFF_DETECTED" >> "$GITHUB_OUTPUT"
-
+  test:
+    name: test
+    needs: filtering
+    runs-on: ubuntu-latest
+    steps:
+    - name: test
+      run: echo ${{needs.filtering.outputs.output1}}
+    
   build:
     name: Build and make test coverage report
     needs: filtering
