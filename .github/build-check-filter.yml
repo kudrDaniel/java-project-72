@@ -4,6 +4,6 @@
 
 rules:
 - paths:
-  - ./app
-    ./.gitignore
-    ./Makefile
+  - app
+    .gitignore
+    Makefile
