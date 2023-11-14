@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 public final class App {
     public static void main(String[] args) {
         Javalin app = App.getApp();
-
-        app.start(7080);
+        var port = Integer.parseInt(System.getProperty("PORT", "7075"));
+        app.start(port);
     }
 
     public static Javalin getApp() {
