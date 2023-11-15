@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 @Slf4j
 public final class App {
-    public static void main(String[] args) throws SQLException, IOException {
+    public static void main(String[] args) throws SQLException {
         Database.init();
 
         Javalin app = App.getApp();

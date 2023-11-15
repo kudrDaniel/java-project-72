@@ -6,31 +6,28 @@ import hexlet.code.App;
 import hexlet.code.repository.BaseRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 @Slf4j
 public final class Database {
-    public static void init() throws IOException, SQLException {
+    public static void init() throws SQLException {
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(Environment.getJdbcUrl());
 
         var dataSource = new HikariDataSource(hikariConfig);
-        URI uri = null;
-        try {
-            uri = App.class.getClassLoader().getResource("schema.sql").toURI();
-        } catch (URISyntaxException e) {
+
+        var is = App.class.getClassLoader().getResourceAsStream("schema.sql");
+        String sql = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            sql = reader.lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
             log.error(e.getMessage());
         }
-        var file = new File(uri);
-        var sql = Files.lines(file.toPath(), StandardCharsets.UTF_8)
-                .collect(Collectors.joining("\n"));
 
         log.info(sql);
         try (var connection = dataSource.getConnection();
