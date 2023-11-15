@@ -3,8 +3,8 @@ package hexlet.code.util;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class Flash {
     private String flashType;
     private String flashMessage;

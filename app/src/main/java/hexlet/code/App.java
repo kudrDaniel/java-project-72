@@ -26,6 +26,8 @@ public final class App {
 
         app.get(NamedRoutes.rootPath(), RootController::index);
 
+        app.post(NamedRoutes.urlsPath(), RootController::addUrl);
+
         return app;
     }
 }

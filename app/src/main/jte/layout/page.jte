@@ -8,10 +8,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
-          crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <title>Анализатор страниц</title>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -31,7 +29,7 @@
     </div>
 </nav>
 <main class="flex-grow-1">
-    @if(page != null && page.getFlash() != null)
+    @if(page != null && page.getFlash().getFlashType() != null && page.getFlash().getFlashMessage() != null)
         <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlash().getFlashType()}" role="alert">
             <p class="m-0">${page.getFlash().getFlashMessage()}</p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
