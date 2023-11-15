@@ -7,7 +7,6 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 @Slf4j
