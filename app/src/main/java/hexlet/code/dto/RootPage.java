@@ -1,4 +1,4 @@
-package hexlet.code.dto.regular;
+package hexlet.code.dto;
 
 import hexlet.code.dto.BasePage;
 import lombok.AllArgsConstructor;

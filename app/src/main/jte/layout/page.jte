@@ -2,6 +2,7 @@
 @import gg.jte.Content
 @param Content content
 @param BasePage page = null
+@param String timestamp = hexlet.code.util.Timestamp.getPageTimestamp()
 
 <html lang="ru">
 <head>
@@ -31,8 +32,8 @@
 </nav>
 <main class="flex-grow-1">
     @if(page != null && page.getFlash() != null)
-        <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
-            <p class="m-0">${page.getFlash()}</p>
+        <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlash().getFlashType()}" role="alert">
+            <p class="m-0">${page.getFlash().getFlashMessage()}</p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -46,9 +47,7 @@
             <div class="text-center">
                 created by
                 <a href="https://github.com/kudrDaniel" target="_blank">Danil Kudritskiy</a>
-                @if(page != null && page.getDate() != null)
-                    ${page.getDate()}
-                @endif
+                ${timestamp}
             </div>
         </div>
     </footer>
