@@ -23,6 +23,8 @@ public final class App {
     public static Javalin getApp() {
         Javalin app = Javalin.create();
 
+        app.before(ctx -> ctx.contentType("text/html; charset=utf-8"));
+
         app.get(NamedRoutes.rootPath(), RootController::index);
 
         return app;

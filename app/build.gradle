@@ -16,7 +16,7 @@ repositories {
 dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     implementation(
-            'io.javalin:javalin:5.6.2',
+            'io.javalin:javalin:5.6.3',
             'io.javalin:javalin-rendering:5.6.2',
             'io.javalin:javalin-bundle:5.6.2',
             'gg.jte:jte:3.0.1',
@@ -24,8 +24,8 @@ dependencies {
             'org.apache.logging.log4j:log4j-core:2.20.0',
             'org.slf4j:slf4j-log4j12:2.0.9',
             'com.fasterxml.jackson.core:jackson-databind:2.15.0',
-            'com.h2database:h2:2.2.222',
-            'com.zaxxer:HikariCP:5.0.1'
+            'com.h2database:h2:2.2.224',
+            'com.zaxxer:HikariCP:5.1.0'
     )
     testImplementation(
             'org.junit.jupiter:junit-jupiter-params:5.9.2',

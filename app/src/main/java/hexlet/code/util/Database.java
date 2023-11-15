@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
@@ -19,9 +23,14 @@ public final class Database {
         hikariConfig.setJdbcUrl(Environment.getJdbcUrl() + ";DB_CLOSE_DELAY=-1;");
 
         var dataSource = new HikariDataSource(hikariConfig);
-        var url = App.class.getClassLoader().getResource("schema.sql");
-        var file = new File(url.getFile());
-        var sql = Files.lines(file.toPath())
+        URI uri = null;
+        try {
+            uri = App.class.getClassLoader().getResource("schema.sql").toURI();
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage());
+        }
+        var file = new File(uri);
+        var sql = Files.lines(file.toPath(), StandardCharsets.UTF_8)
                 .collect(Collectors.joining("\n"));
 
         log.info(sql);
