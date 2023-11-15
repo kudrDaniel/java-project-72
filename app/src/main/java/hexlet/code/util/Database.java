@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public final class Database {
     public static void init() throws IOException, SQLException {
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(Environment.getJdbcUrl() + ";DB_CLOSE_DELAY=-1;");
+        hikariConfig.setJdbcUrl(Environment.getJdbcUrl());
 
         var dataSource = new HikariDataSource(hikariConfig);
         URI uri = null;

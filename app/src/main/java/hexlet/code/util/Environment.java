@@ -17,6 +17,6 @@ public class Environment {
     }
 
     public static String getJdbcUrl() {
-        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:seo_page");
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:seo_page;DB_CLOSE_DELAY=-1;");
     }
 }
