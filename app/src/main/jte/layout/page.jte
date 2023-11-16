@@ -1,8 +1,9 @@
 @import hexlet.code.dto.BasePage
 @import gg.jte.Content
+@import hexlet.code.util.DateFormatter
+@import java.time.LocalDateTime
 @param Content content
 @param BasePage page = null
-@param String timestamp = hexlet.code.util.Timestamp.getPageTimestamp()
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -45,7 +46,7 @@
         <div class="text-center">
             created by
             <a href="https://github.com/kudrDaniel" target="_blank">Danil Kudritskiy</a>
-            ${timestamp}
+            ${DateFormatter.getOnlyYear(LocalDateTime.now())}
         </div>
     </div>
 </footer>

@@ -9,10 +9,6 @@ public class Flash {
     private String flashType;
     private String flashMessage;
 
-    public static String empty() {
-        return "";
-    }
-
     public static String alertInfo() {
         return "alert-info";
     }

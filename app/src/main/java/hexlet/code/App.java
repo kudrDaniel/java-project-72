@@ -1,6 +1,8 @@
 package hexlet.code;
 
+import hexlet.code.controller.ChecksController;
 import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlController;
 import hexlet.code.util.Database;
 import hexlet.code.util.Environment;
 import hexlet.code.util.NamedRoutes;
@@ -26,7 +28,12 @@ public final class App {
 
         app.get(NamedRoutes.rootPath(), RootController::index);
 
-        app.post(NamedRoutes.urlsPath(), RootController::addUrl);
+        app.post(NamedRoutes.urlsPath(), UrlController::create);
+        app.get(NamedRoutes.urlsPath(), UrlController::index);
+
+        app.get(NamedRoutes.urlPath("{id}"), UrlController::show);
+
+        app.post(NamedRoutes.checksPath("{id}"), ChecksController::create);
 
         return app;
     }
