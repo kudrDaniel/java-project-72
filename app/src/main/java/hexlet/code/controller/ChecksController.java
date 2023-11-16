@@ -50,8 +50,8 @@ public class ChecksController {
 
             ctx.sessionAttribute("flashType", Flash.alertSuccess());
             ctx.sessionAttribute("flashMessage", "Страница успешно проверена");
-        } catch (UnirestException e) {
-            log.error("{}", "Error while get response occurred", e);
+        } catch (Exception e) {
+            log.error("{}", "Error while checking occurred", e);
             ctx.sessionAttribute("flashType", Flash.alertDanger());
             ctx.sessionAttribute("flashMessage", "Некорректный адрес");
         } finally {
