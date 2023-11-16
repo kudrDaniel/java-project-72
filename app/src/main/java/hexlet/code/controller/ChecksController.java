@@ -44,7 +44,7 @@ public class ChecksController {
                 );
             } catch (NullPointerException e) {
                 log.error("{}", "Error while get description occurred", e);
-                check.setHeader("");
+                check.setDescription("");
             }
             CheckRepository.save(check);
 
