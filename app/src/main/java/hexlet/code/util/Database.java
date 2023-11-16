@@ -19,9 +19,18 @@ public final class Database {
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(Environment.getJdbcUrl());
 
-        var dataSource = new HikariDataSource(hikariConfig);
+        HikariDataSource dataSource;
+
+        try {
+            dataSource = new HikariDataSource(hikariConfig);
+        } catch (Exception e) {
+            log.error("{}", "Error while db connection", e);
+            hikariConfig.setJdbcUrl(Environment.getMemJdbc());
+            dataSource = new HikariDataSource(hikariConfig);
+        }
 
         var is = App.class.getClassLoader().getResourceAsStream("schema.sql");
+
         String sql = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             sql = reader.lines().collect(Collectors.joining("\n"));
