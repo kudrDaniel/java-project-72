@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AppTest {
     @Test
-    public void applicationTest() {
+    public void applicationTest() throws Exception {
         Javalin application = App.getApp();
 
         assertThat(application).isNotNull();

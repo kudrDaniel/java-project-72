@@ -14,14 +14,14 @@ import java.sql.SQLException;
 @Slf4j
 public final class App {
     public static void main(String[] args) throws SQLException {
-        Database.init();
-
         Javalin app = App.getApp();
 
         app.start(Environment.getPort());
     }
 
-    public static Javalin getApp() {
+    public static Javalin getApp() throws SQLException {
+        Database.init();
+
         Javalin app = Javalin.create();
 
         app.before(ctx -> ctx.contentType("text/html; charset=utf-8"));
