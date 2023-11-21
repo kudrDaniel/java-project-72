@@ -5,8 +5,10 @@ import hexlet.code.controller.RootController;
 import hexlet.code.controller.UrlController;
 import hexlet.code.util.Database;
 import hexlet.code.util.Environment;
+import hexlet.code.util.JteTemplateHelper;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
@@ -21,6 +23,8 @@ public final class App {
 
     public static Javalin getApp() throws SQLException {
         Database.init();
+
+        JavalinJte.init(JteTemplateHelper.createTemplateEngine());
 
         Javalin app = Javalin.create();
 
