@@ -32,7 +32,7 @@ public class TestHelper {
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, url);
-            stmt.setTimestamp(2,createdAt);
+            stmt.setTimestamp(2, createdAt);
             var resultSet = stmt.executeUpdate();
         }
     }
