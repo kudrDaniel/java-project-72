@@ -5,15 +5,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public final class DateFormatter {
-    public static String getOnlyYear(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ofPattern("yyyy"));
+
+    public static String timestampToString(Timestamp timestamp, String format) {
+        return timestampToString(timestamp.toLocalDateTime(), format);
     }
 
-    public static String getDateBySlashWithTime(Timestamp timestamp) {
-        return getDateBySlashWithTime(timestamp.toLocalDateTime());
-    }
-
-    public static String getDateBySlashWithTime(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy kk:mm"));
+    public static String timestampToString(LocalDateTime date, String format) {
+        return date.format(DateTimeFormatter.ofPattern(format));
     }
 }

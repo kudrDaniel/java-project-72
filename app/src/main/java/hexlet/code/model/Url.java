@@ -8,14 +8,9 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@ToString
 public class Url {
     private Long id;
-
-    @ToString.Include
     private String name;
-
     private Timestamp createdAt;
-
     private Check last;
 }

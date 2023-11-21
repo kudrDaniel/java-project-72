@@ -3,8 +3,8 @@ package hexlet.code;
 import hexlet.code.controller.ChecksController;
 import hexlet.code.controller.RootController;
 import hexlet.code.controller.UrlController;
-import hexlet.code.util.Database;
-import hexlet.code.util.Environment;
+import hexlet.code.util.DataSourceHelper;
+import hexlet.code.util.EnvironmentHelper;
 import hexlet.code.util.JteTemplateHelper;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
@@ -18,11 +18,11 @@ public final class App {
     public static void main(String[] args) throws SQLException {
         Javalin app = App.getApp();
 
-        app.start(Environment.getPort());
+        app.start(EnvironmentHelper.getPort());
     }
 
     public static Javalin getApp() throws SQLException {
-        Database.init();
+        DataSourceHelper.init();
 
         JavalinJte.init(JteTemplateHelper.createTemplateEngine());
 

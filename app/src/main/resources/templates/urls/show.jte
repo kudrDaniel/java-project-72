@@ -21,7 +21,7 @@ content = @`
             </tr>
             <tr>
                 <td>Дата создания</td>
-                <td>${DateFormatter.getDateBySlashWithTime(page.getUrl().getCreatedAt())}</td>
+                <td>${DateFormatter.timestampToString(page.getUrl().getCreatedAt(), "dd/MM/yyyy kk:mm")}</td>
             </tr>
             </tbody>
         </table>
@@ -61,7 +61,7 @@ content = @`
                         ${page.getChecks().get(i).getDescription()}
                     </td>
                     <td>
-                        ${DateFormatter.getDateBySlashWithTime(page.getChecks().get(i).getCreatedAt())}
+                        ${DateFormatter.timestampToString(page.getChecks().get(i).getCreatedAt(), "dd/MM/yyyy kk:mm")}
                     </td>
                 </tr>
             @endfor

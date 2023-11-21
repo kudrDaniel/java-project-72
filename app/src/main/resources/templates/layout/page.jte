@@ -46,7 +46,7 @@
         <div class="text-center">
             created by
             <a href="https://github.com/kudrDaniel" target="_blank">Danil Kudritskiy</a>
-            ${DateFormatter.getOnlyYear(LocalDateTime.now())}
+            ${DateFormatter.timestampToString(LocalDateTime.now(), "yyyy")}
         </div>
     </div>
 </footer>

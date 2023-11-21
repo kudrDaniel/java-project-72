@@ -14,11 +14,11 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 @Slf4j
-public final class Database {
+public final class DataSourceHelper {
     public static void init() throws SQLException {
         log.info("Data source initialization start...");
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(Environment.getJdbcUrl());
+        hikariConfig.setJdbcUrl(EnvironmentHelper.getJdbcUrl());
 
         HikariDataSource dataSource;
 
@@ -26,7 +26,7 @@ public final class Database {
             dataSource = new HikariDataSource(hikariConfig);
         } catch (Exception e) {
             log.info("Error while data source initialization, switch to in-memory database", e);
-            hikariConfig.setJdbcUrl(Environment.getMemJdbc());
+            hikariConfig.setJdbcUrl(EnvironmentHelper.getMemJdbc());
             dataSource = new HikariDataSource(hikariConfig);
         }
 

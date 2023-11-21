@@ -28,7 +28,7 @@ content = @`
                     </td>
                     <td>
                         @if(page.getUrls().get(i).getLast() != null)
-                            ${DateFormatter.getDateBySlashWithTime(page.getUrls().get(i).getLast().getCreatedAt())}
+                            ${DateFormatter.timestampToString(page.getUrls().get(i).getLast().getCreatedAt(), "dd/MM/yyyy kk:mm")}
                     </td>
                     <td>
                         ${page.getUrls().get(i).getLast().getStatus()}

@@ -3,7 +3,7 @@ package hexlet.code.util;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Environment {
+public class EnvironmentHelper {
     public static final String PORT_ENV = "PORT";
     public static final String DB_ENV = "JDBC_DATABASE_URL";
 
