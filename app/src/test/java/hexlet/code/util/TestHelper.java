@@ -23,7 +23,7 @@ public class TestHelper {
     }
 
     public static String getDatabaseUrl() {
-        return "jdbc:h2:mem:seo_page";
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:seo_page");
     }
 
     public static void addUrl(HikariDataSource dataSource, String url, Timestamp createdAt) throws SQLException {
