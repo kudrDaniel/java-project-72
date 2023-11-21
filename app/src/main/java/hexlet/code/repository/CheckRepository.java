@@ -12,7 +12,8 @@ import java.util.Optional;
 @Slf4j
 public class CheckRepository extends BaseRepository {
     public static void save(Check check) {
-        var sql = "INSERT INTO checks (url_id, status, title, header, description) VALUES (?, ?, ?, ?, ?)";
+        var sql = "INSERT INTO checks (url_id, status, title, header, description, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, check.getUrlId());
@@ -20,16 +21,17 @@ public class CheckRepository extends BaseRepository {
             preparedStatement.setString(3, check.getTitle());
             preparedStatement.setString(4, check.getHeader());
             preparedStatement.setString(5, check.getDescription());
+            preparedStatement.setTimestamp(6, check.getCreatedAt());
             preparedStatement.executeUpdate();
+
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 check.setId(generatedKeys.getLong(1));
-                check.setCreatedAt(generatedKeys.getTimestamp(2));
             } else {
                 throw new SQLException("DB have not returned keys after saving an entity");
             }
         } catch (SQLException e) {
-            log.error("{}", "Error while saving check", e);
+            log.error("Error while saving check", e);
         }
     }
 
@@ -38,6 +40,7 @@ public class CheckRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
+
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 var check = new Check();
@@ -52,7 +55,7 @@ public class CheckRepository extends BaseRepository {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            log.error("{}", "Error while finding url by id", e);
+            log.error("Error while finding url by id", e);
             return Optional.empty();
         }
     }
@@ -62,6 +65,7 @@ public class CheckRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
+
             var resultSet = preparedStatement.executeQuery();
             var result = new ArrayList<Check>();
             while (resultSet.next()) {
@@ -77,7 +81,7 @@ public class CheckRepository extends BaseRepository {
             }
             return result;
         } catch (SQLException e) {
-            log.error("{}", "Error while getting urls", e);
+            log.error("Error while getting urls", e);
             return List.of();
         }
     }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public final class Database {
     public static void init() throws SQLException {
+        log.info("Data source initialization start...");
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(Environment.getJdbcUrl());
 
@@ -24,7 +25,7 @@ public final class Database {
         try {
             dataSource = new HikariDataSource(hikariConfig);
         } catch (Exception e) {
-            log.error("{}", "Error while db connection", e);
+            log.info("Error while data source initialization, switch to in-memory database", e);
             hikariConfig.setJdbcUrl(Environment.getMemJdbc());
             dataSource = new HikariDataSource(hikariConfig);
         }

@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Slf4j
 public class ChecksController {
     public static void create(Context ctx) {
@@ -33,7 +36,7 @@ public class ChecksController {
             try {
                 check.setHeader(html.selectFirst("h1").text());
             } catch (NullPointerException e) {
-                log.error("{}", "Error while get h1 text occurred", e);
+                log.error("Error while get h1 text occurred", e);
                 check.setHeader("");
             }
             try {
@@ -42,15 +45,16 @@ public class ChecksController {
                                 .attributes().get("content")
                 );
             } catch (NullPointerException e) {
-                log.error("{}", "Error while get description occurred", e);
+                log.error("Error while get description occurred", e);
                 check.setDescription("");
             }
+            check.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             CheckRepository.save(check);
 
             ctx.sessionAttribute("flashType", Flash.alertSuccess());
             ctx.sessionAttribute("flashMessage", "Страница успешно проверена");
         } catch (Exception e) {
-            log.error("{}", "Error while checking occurred", e);
+            log.error("Error while checking occurred", e);
             ctx.sessionAttribute("flashType", Flash.alertDanger());
             ctx.sessionAttribute("flashMessage", "Некорректный адрес");
         } finally {

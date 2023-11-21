@@ -14,6 +14,6 @@ public final class DateFormatter {
     }
 
     public static String getDateBySlashWithTime(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm"));
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy kk:mm"));
     }
 }

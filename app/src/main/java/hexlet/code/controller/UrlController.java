@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import java.net.URI;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Slf4j
@@ -47,6 +49,7 @@ public class UrlController {
             var parsedUrl = new URI(rawUrl).toURL();
             var url = new Url();
             url.setName(parsedUrl.toString());
+            url.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             UrlRepository.save(url);
             ctx.sessionAttribute("flashType", Flash.alertSuccess());
             ctx.sessionAttribute("flashMessage", "Страница успешно добавлена");
