@@ -28,6 +28,6 @@ public class Environment {
     }
 
     public static String getMemJdbc() {
-        return "jdbc:h2:mem:seo_page;DB_CLOSE_DELAY=-1;";
+        return "jdbc:h2:mem:seo_page";
     }
 }

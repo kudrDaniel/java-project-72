@@ -12,7 +12,7 @@ import java.util.Optional;
 @Slf4j
 public class CheckRepository extends BaseRepository {
     public static void save(Check check) {
-        var sql = "INSERT INTO checks (url_id, status, title, header, description, created_at) "
+        var sql = "INSERT INTO url_checks (url_id, status_code, title, h1, description, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -36,7 +36,7 @@ public class CheckRepository extends BaseRepository {
     }
 
     public static Optional<Check> getLastByUrlId(Long urlId) {
-        var sql = "SELECT * FROM checks WHERE url_id = ? ORDER BY id DESC LIMIT 1";
+        var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY id DESC LIMIT 1";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
@@ -48,7 +48,7 @@ public class CheckRepository extends BaseRepository {
                 check.setUrlId(resultSet.getLong("url_id"));
                 check.setStatus(resultSet.getInt("status"));
                 check.setTitle(resultSet.getString("title"));
-                check.setHeader(resultSet.getString("header"));
+                check.setHeader(resultSet.getString("h1"));
                 check.setDescription(resultSet.getString("description"));
                 check.setCreatedAt(resultSet.getTimestamp("created_at"));
                 return Optional.of(check);
@@ -61,7 +61,7 @@ public class CheckRepository extends BaseRepository {
     }
 
     public static List<Check> getEntitiesByUrlId(Long urlId) {
-        var sql = "SELECT * FROM checks WHERE url_id = ? ORDER BY id ASC";
+        var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY id ASC";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
@@ -72,9 +72,9 @@ public class CheckRepository extends BaseRepository {
                 var check = new Check();
                 check.setId(resultSet.getLong("id"));
                 check.setUrlId(resultSet.getLong("url_id"));
-                check.setStatus(resultSet.getInt("status"));
+                check.setStatus(resultSet.getInt("status_code"));
                 check.setTitle(resultSet.getString("title"));
-                check.setHeader(resultSet.getString("header"));
+                check.setHeader(resultSet.getString("h1"));
                 check.setDescription(resultSet.getString("description"));
                 check.setCreatedAt(resultSet.getTimestamp("created_at"));
                 result.add(check);
