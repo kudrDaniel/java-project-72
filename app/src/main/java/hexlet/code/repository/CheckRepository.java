@@ -46,7 +46,7 @@ public class CheckRepository extends BaseRepository {
                 var check = new Check();
                 check.setId(resultSet.getLong("id"));
                 check.setUrlId(resultSet.getLong("url_id"));
-                check.setStatus(resultSet.getInt("status"));
+                check.setStatus(resultSet.getInt("status_code"));
                 check.setTitle(resultSet.getString("title"));
                 check.setHeader(resultSet.getString("h1"));
                 check.setDescription(resultSet.getString("description"));
