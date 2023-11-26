@@ -2,7 +2,8 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import hexlet.code.util.TestHelper;
+import hexlet.code.repository.CheckRepository;
+import hexlet.code.repository.UrlRepository;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
@@ -17,10 +18,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,15 +28,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AppTest {
     private static MockWebServer mockServer;
     private Javalin app;
-    private Map<String, Object> existingUrl;
-    private Map<String, Object> existingUrlCheck;
     private HikariDataSource dataSource;
 
     @BeforeAll
     public static void beforeAll() throws IOException {
+        var fileName = "index.html";
+        var filePath = Paths.get("src", "test", "resources", "fixtures", fileName)
+                .toAbsolutePath().normalize();
         mockServer = new MockWebServer();
         MockResponse mockedResponse = new MockResponse()
-                .setBody(TestHelper.readFixture("index.html"));
+                .setBody(Files.readString(filePath).trim());
         mockServer.enqueue(mockedResponse);
         mockServer.start();
     }
@@ -46,31 +47,32 @@ class AppTest {
         app = App.getApp();
 
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(TestHelper.getDatabaseUrl());
+        var jdbcDatabaseUrl = "jdbc:h2:mem:seo_page";
+        hikariConfig.setJdbcUrl(jdbcDatabaseUrl);
 
         dataSource = new HikariDataSource(hikariConfig);
 
-        var is = App.class.getClassLoader().getResourceAsStream("schema.sql");
+        var dbInit = App.class.getClassLoader().getResourceAsStream("schema.sql");
+        String dbInitQuery = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(dbInit, StandardCharsets.UTF_8))) {
+            dbInitQuery = reader.lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            throw e;
+        }
 
-        String sql = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            sql = reader.lines().collect(Collectors.joining("\n"));
+        var dbScript = App.class.getClassLoader().getResourceAsStream("script.sql");
+        String dbScriptQuery = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(dbScript, StandardCharsets.UTF_8))) {
+            dbScriptQuery = reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw e;
         }
 
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
-            statement.execute(sql);
+            statement.execute(dbInitQuery);
+            statement.execute(dbScriptQuery);
         }
-
-        String url = "https://localhost";
-
-        TestHelper.addUrl(dataSource, url, Timestamp.valueOf(LocalDateTime.now()));
-        existingUrl = TestHelper.getUrlByName(dataSource, url);
-
-        TestHelper.addUrlCheck(dataSource, (long) existingUrl.get("id"), Timestamp.valueOf(LocalDateTime.now()));
-        existingUrlCheck = TestHelper.getUrlCheck(dataSource, (long) existingUrl.get("id"));
     }
 
     @Nested
@@ -91,26 +93,25 @@ class AppTest {
                 var response = client.get("/urls");
                 assertThat(response.code()).isEqualTo(200);
                 assertThat(response.body().string())
-                        .contains(existingUrl.get("name").toString())
-                        .contains(existingUrlCheck.get("status_code").toString());
+                        .contains("https://localhost")
+                        .contains("200");
             });
         }
 
         @Test
         void testShow() {
             JavalinTest.test(app, (server, client) -> {
-                var response = client.get("/urls/" + existingUrl.get("id"));
+                var response = client.get("/urls/" + 1);
                 assertThat(response.code()).isEqualTo(200);
                 assertThat(response.body().string())
-                        .contains(existingUrl.get("name").toString())
-                        .contains(existingUrlCheck.get("status_code").toString());
+                        .contains("https://localhost")
+                        .contains("200");
             });
         }
 
         @Test
         void testStore() {
-
-            String inputUrl = "https://ru.hexlet.io";
+            String inputUrl = "https://localhost:8080";
 
             JavalinTest.test(app, (server, client) -> {
                 var requestBody = "url=" + inputUrl;
@@ -121,9 +122,23 @@ class AppTest {
                 assertThat(response.body().string())
                         .contains(inputUrl);
 
-                var actualUrl = TestHelper.getUrlByName(dataSource, inputUrl);
+                var actualUrl = UrlRepository.findByName("https://localhost:8080");
                 assertThat(actualUrl).isNotNull();
-                assertThat(actualUrl.get("name").toString()).isEqualTo(inputUrl);
+                assertThat(actualUrl.get().getName().toString()).isEqualTo(inputUrl);
+            });
+        }
+
+        @Test
+        void testDuplicateStore() {
+            String inputUrl = "https://localhost:8080";
+
+            JavalinTest.test(app, (server, client) -> {
+                var requestBody = "url=" + inputUrl;
+
+                var response = client.post("/urls", requestBody);
+                assertThat(response.body().string()
+                        .contains("Страница уже существует"));
+                assertThat(UrlRepository.getEntities().size()).isEqualTo(2);
             });
         }
     }
@@ -138,21 +153,21 @@ class AppTest {
                 var requestBody = "url=" + url;
                 assertThat(client.post("/urls", requestBody).code()).isEqualTo(200);
 
-                var actualUrl = TestHelper.getUrlByName(dataSource, url);
+                var actualUrl = UrlRepository.findByName(url);
                 assertThat(actualUrl).isNotNull();
 
-                assertThat(actualUrl.get("name").toString()).isEqualTo(url);
+                assertThat(actualUrl.get().getName().toString()).isEqualTo(url);
 
-                client.post("/urls/" + actualUrl.get("id") + "/checks");
+                client.post("/urls/" + actualUrl.get().getId() + "/checks");
 
-                assertThat(client.get("/urls/" + actualUrl.get("id")).code())
+                assertThat(client.get("/urls/" + actualUrl.get().getId()).code())
                         .isEqualTo(200);
 
-                var actualCheck = TestHelper.getUrlCheck(dataSource, (long) actualUrl.get("id"));
+                var actualCheck = CheckRepository.getLastByUrlId(actualUrl.get().getId());
                 assertThat(actualCheck).isNotNull();
-                assertThat(actualCheck.get("title")).isEqualTo("Todd Howard quotes");
-                assertThat(actualCheck.get("h1")).isEqualTo("It just works!");
-                assertThat(actualCheck.get("description")).isEqualTo("quotes by genius game-designer");
+                assertThat(actualCheck.get().getTitle()).isEqualTo("Todd Howard quotes");
+                assertThat(actualCheck.get().getHeader()).isEqualTo("It just works!");
+                assertThat(actualCheck.get().getDescription()).isEqualTo("quotes by genius game-designer");
             });
         }
     }
