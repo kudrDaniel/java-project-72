@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.util.EnvironmentHelper;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
@@ -47,7 +48,7 @@ class AppTest {
         app = App.getApp();
 
         var hikariConfig = new HikariConfig();
-        var jdbcDatabaseUrl = "jdbc:h2:mem:seo_page";
+        var jdbcDatabaseUrl = EnvironmentHelper.getJdbcUrl();
         hikariConfig.setJdbcUrl(jdbcDatabaseUrl);
 
         dataSource = new HikariDataSource(hikariConfig);
