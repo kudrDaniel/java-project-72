@@ -9,6 +9,8 @@ import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,11 +137,13 @@ class AppTest {
 
             JavalinTest.test(app, (server, client) -> {
                 var requestBody = "url=" + inputUrl;
-
                 var response = client.post("/urls", requestBody);
-                assertThat(response.body().string()
-                        .contains("Страница уже существует"));
-                assertThat(UrlRepository.getEntities().size()).isEqualTo(2);
+                assertThat(response.priorResponse()).isNotNull();
+                assertThat(response.priorResponse().code()).isEqualTo(302);
+
+                Document html = Jsoup.parse(response.body().string());
+                var count = html.select("tr").size() - 1;
+                assertThat(count).isEqualTo(2);
             });
         }
     }
