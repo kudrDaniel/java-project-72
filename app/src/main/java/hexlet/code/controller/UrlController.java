@@ -11,7 +11,6 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import java.net.URI;
 import java.sql.Timestamp;
@@ -54,7 +53,7 @@ public class UrlController {
             ctx.sessionAttribute("flashType", Flash.alertSuccess());
             ctx.sessionAttribute("flashMessage", "Страница успешно добавлена");
             ctx.redirect(NamedRoutes.urlsPath());
-        } catch (JdbcSQLIntegrityConstraintViolationException e) {
+        } catch (RuntimeException e) {
             ctx.sessionAttribute("flashType", Flash.alertInfo());
             ctx.sessionAttribute("flashMessage", "Страница уже существует");
             ctx.redirect(NamedRoutes.urlsPath());

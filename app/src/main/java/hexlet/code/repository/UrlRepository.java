@@ -2,7 +2,6 @@ package hexlet.code.repository;
 
 import hexlet.code.model.Url;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,13 +11,13 @@ import java.util.Optional;
 
 @Slf4j
 public final class UrlRepository extends BaseRepository {
-    public static void save(Url url) throws JdbcSQLIntegrityConstraintViolationException {
+    public static void save(Url url) {
         var sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             var name = url.getName();
             if (findByName(name).isPresent()) {
-                throw new SQLException(String.format("Entity with name=%s already exists", name));
+                throw new RuntimeException(String.format("Entity with name=%s already exists", name));
             }
 
             preparedStatement.setString(1, name);
@@ -31,7 +30,7 @@ public final class UrlRepository extends BaseRepository {
             } else {
                 throw new SQLException("DB have not returned keys after saving an entity");
             }
-        } catch (JdbcSQLIntegrityConstraintViolationException e) {
+        } catch (RuntimeException e) {
             log.error("Url with same name exists", e);
             throw e;
         } catch (SQLException e) {
