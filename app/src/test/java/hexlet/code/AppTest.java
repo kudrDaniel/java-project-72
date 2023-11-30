@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
-import hexlet.code.util.EnvironmentHelper;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import lombok.extern.slf4j.Slf4j;
