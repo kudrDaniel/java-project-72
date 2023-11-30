@@ -6,7 +6,7 @@ import hexlet.code.controller.Routed;
 import hexlet.code.controller.UrlController;
 import hexlet.code.provider.DatabaseProvider;
 import hexlet.code.provider.JteTemplateProvider;
-import hexlet.code.util.Environment;
+import hexlet.code.util.Envs;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public final class App {
     public static void main(String[] args) {
         Javalin app = App.getApp();
 
-        app.start(Environment.PORT.getValue());
+        app.start(Envs.getPort());
     }
 
     public static Javalin getApp() {
