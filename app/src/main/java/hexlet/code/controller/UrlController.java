@@ -86,10 +86,7 @@ public final class UrlController implements Routed {
             switch (e.getState()) {
                 case URL_INCORRECT -> {
                     log.error("Error occurred while parsing url: {}", rawUrl, e);
-                    var flash = new Flash(
-                            ctx.consumeSessionAttribute(FlashProvider.ALERT_DANGER),
-                            ctx.consumeSessionAttribute("Некорректный URL")
-                    );
+                    var flash = new Flash(FlashProvider.ALERT_DANGER, "Некорректный URL");
                     var page = new RootPage(flash, rawUrl);
                     ctx.render("index.jte", Collections.singletonMap("page", page));
                 }
