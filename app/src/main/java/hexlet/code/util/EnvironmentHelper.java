@@ -28,6 +28,6 @@ public class EnvironmentHelper {
     }
 
     public static String getMemJdbc() {
-        return "jdbc:h2:mem:seo_page";
+        return "jdbc:h2:mem:project";
     }
 }
