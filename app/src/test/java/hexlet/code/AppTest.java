@@ -7,6 +7,7 @@ import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.EnvironmentHelper;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class AppTest {
     private static MockWebServer mockServer;
     private Javalin app;
@@ -142,6 +144,9 @@ class AppTest {
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isTrue();
                     assertThat(resultSet.getString("name")).isEqualTo(expectedUrl);
+                } catch (SQLException e) {
+                    log.error(e.getSQLState(), e);
+                    throw e;
                 }
             });
         }
@@ -173,6 +178,9 @@ class AppTest {
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isTrue();
                     assertThat(resultSet.next()).isFalse();
+                } catch (SQLException e) {
+                    log.error(e.getSQLState(), e);
+                    throw e;
                 }
             });
         }
@@ -196,6 +204,9 @@ class AppTest {
                     preparedStatement.setString(1, inputUrl);
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isFalse();
+                } catch (SQLException e) {
+                    log.error(e.getSQLState(), e);
+                    throw e;
                 }
             });
         }
