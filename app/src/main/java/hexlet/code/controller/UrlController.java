@@ -45,7 +45,15 @@ public class UrlController {
     public static void create(Context ctx) {
         var rawUrl = ctx.formParam("url");
         try {
-            var parsedUrl = new URI(rawUrl).toURL();
+            var fullUrl = new URI(rawUrl).toURL();
+            if (fullUrl.getAuthority() == null || fullUrl.getPort() > 65535) {
+                throw new IllegalArgumentException();
+            }
+            var parsedUrl = String.format(
+                    "%s://%s",
+                    fullUrl.getProtocol(),
+                    fullUrl.getAuthority()
+            );
             var url = new Url();
             url.setName(parsedUrl.toString());
             url.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
@@ -53,7 +61,7 @@ public class UrlController {
             ctx.sessionAttribute("flashType", Flash.alertSuccess());
             ctx.sessionAttribute("flashMessage", "Страница успешно добавлена");
             ctx.redirect(NamedRoutes.urlsPath());
-        } catch (RuntimeException e) {
+        } catch (IllegalStateException e) {
             ctx.sessionAttribute("flashType", Flash.alertInfo());
             ctx.sessionAttribute("flashMessage", "Страница уже существует");
             ctx.redirect(NamedRoutes.urlsPath());

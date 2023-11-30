@@ -9,13 +9,14 @@ import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -112,9 +113,18 @@ class AppTest {
             });
         }
 
-        @Test
-        void testStore() {
-            String inputUrl = "https://localhost:8080";
+        @ParameterizedTest
+        @ValueSource(strings = {
+            "https://localhost:8080",
+            "https://localhost:7070/about",
+            "https://localhost:7076/about/share"
+        })
+        void testStore(String inputUrl) {
+            var endIndex = StringUtils.ordinalIndexOf(inputUrl, "/", 3);
+            if (endIndex == -1) {
+                endIndex = inputUrl.length();
+            }
+            var expectedUrl = inputUrl.substring(0, endIndex);
 
             JavalinTest.test(app, (server, client) -> {
                 var requestBody = "url=" + inputUrl;
@@ -123,17 +133,32 @@ class AppTest {
                 var response = client.get("/urls");
                 assertThat(response.code()).isEqualTo(200);
                 assertThat(response.body().string())
-                        .contains(inputUrl);
+                        .contains(expectedUrl);
 
-                var actualUrl = UrlRepository.findByName("https://localhost:8080");
-                assertThat(actualUrl).isNotNull();
-                assertThat(actualUrl.get().getName().toString()).isEqualTo(inputUrl);
+                var statement = "SELECT * FROM urls WHERE name = ?";
+                try (var connection = dataSource.getConnection();
+                     var preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.setString(1, expectedUrl);
+                    var resultSet = preparedStatement.executeQuery();
+                    assertThat(resultSet.next()).isTrue();
+                    assertThat(resultSet.getString("name")).isEqualTo(expectedUrl);
+                }
             });
         }
 
-        @Test
-        void testDuplicateStore() {
-            String inputUrl = "https://localhost:8080";
+        @ParameterizedTest
+        @ValueSource(strings = {
+            "https://localhost/about",
+            "https://localhost:8080",
+            "https://localhost:7070/info",
+            "https://localhost:7076/info/share"
+        })
+        void testDuplicateStore(String inputUrl) {
+            var endIndex = StringUtils.ordinalIndexOf(inputUrl, "/", 3);
+            if (endIndex == -1) {
+                endIndex = inputUrl.length();
+            }
+            var expectedUrl = inputUrl.substring(0, endIndex);
 
             JavalinTest.test(app, (server, client) -> {
                 var requestBody = "url=" + inputUrl;
@@ -141,9 +166,37 @@ class AppTest {
                 assertThat(response.priorResponse()).isNotNull();
                 assertThat(response.priorResponse().code()).isEqualTo(302);
 
-                Document html = Jsoup.parse(response.body().string());
-                var count = html.select("tr").size() - 1;
-                assertThat(count).isEqualTo(2);
+                var statement = "SELECT * FROM urls WHERE name = ?";
+                try (var connection = dataSource.getConnection();
+                     var preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.setString(1, expectedUrl);
+                    var resultSet = preparedStatement.executeQuery();
+                    assertThat(resultSet.next()).isTrue();
+                    assertThat(resultSet.next()).isFalse();
+                }
+            });
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+            "jgkfld",
+            "https:/localhost:8080",
+            "ftp//localhost:7070/info",
+            "https://localhost:789653/info/share"
+        })
+        void testWrongStore(String inputUrl) {
+            JavalinTest.test(app, (server, client) -> {
+                var requestBody = "url=" + inputUrl;
+                var response = client.post("/urls", requestBody);
+                assertThat(response.code()).isEqualTo(200);
+
+                var statement = "SELECT * FROM urls WHERE name = ?";
+                try (var connection = dataSource.getConnection();
+                     var preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.setString(1, inputUrl);
+                    var resultSet = preparedStatement.executeQuery();
+                    assertThat(resultSet.next()).isFalse();
+                }
             });
         }
     }

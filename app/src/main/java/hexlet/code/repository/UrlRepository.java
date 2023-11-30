@@ -17,7 +17,7 @@ public final class UrlRepository extends BaseRepository {
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             var name = url.getName();
             if (findByName(name).isPresent()) {
-                throw new RuntimeException(String.format("Entity with name=%s already exists", name));
+                throw new IllegalStateException(String.format("Entity with name=%s already exists", name));
             }
 
             preparedStatement.setString(1, name);
@@ -30,7 +30,7 @@ public final class UrlRepository extends BaseRepository {
             } else {
                 throw new SQLException("DB have not returned keys after saving an entity");
             }
-        } catch (RuntimeException e) {
+        } catch (IllegalStateException e) {
             log.error("Url with same name exists", e);
             throw e;
         } catch (SQLException e) {

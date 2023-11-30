@@ -24,6 +24,7 @@ dependencies {
             'gg.jte:jte:3.0.1',
             'org.apache.logging.log4j:log4j-api:2.20.0',
             'org.apache.logging.log4j:log4j-core:2.20.0',
+            'org.apache.commons:commons-lang3:3.14.0',
             'org.slf4j:slf4j-log4j12:2.0.9',
             'com.fasterxml.jackson.core:jackson-databind:2.15.0',
             'com.h2database:h2:2.2.224',
