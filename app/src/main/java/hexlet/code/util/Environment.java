@@ -12,7 +12,7 @@ public abstract class Environment<T> {
             "DEVELOPMENT", false) {
         @Override
         Optional<Boolean> getEnv(String def) {
-            if (System.getProperty(def).equals("true")) {
+            if (System.getProperty(def, "false").equals("true")) {
                 return Optional.of(true);
             }
             return Optional.empty();
