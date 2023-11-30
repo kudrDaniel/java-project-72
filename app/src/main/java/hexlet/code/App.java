@@ -2,42 +2,42 @@ package hexlet.code;
 
 import hexlet.code.controller.ChecksController;
 import hexlet.code.controller.RootController;
+import hexlet.code.controller.Routed;
 import hexlet.code.controller.UrlController;
-import hexlet.code.util.DataSourceHelper;
-import hexlet.code.util.EnvironmentHelper;
-import hexlet.code.util.JteTemplateHelper;
-import hexlet.code.util.NamedRoutes;
+import hexlet.code.provider.DatabaseProvider;
+import hexlet.code.provider.JteTemplateProvider;
+import hexlet.code.util.Environment;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 public final class App {
-    public static void main(String[] args) throws SQLException {
+    private static final List<Routed> CONTROLLERS = List.of(
+            RootController.getINSTANCE(),
+            UrlController.getINSTANCE(),
+            ChecksController.getINSTANCE()
+    );
+
+    public static void main(String[] args) {
         Javalin app = App.getApp();
 
-        app.start(EnvironmentHelper.getPort());
+        app.start(Environment.PORT.getValue());
     }
 
-    public static Javalin getApp() throws SQLException {
-        DataSourceHelper.init();
+    public static Javalin getApp() {
+        JavalinJte.init(JteTemplateProvider.createTemplateEngine());
 
-        JavalinJte.init(JteTemplateHelper.createTemplateEngine());
+        DatabaseProvider.createConnectionPool();
+        DatabaseProvider.initializeDB();
 
-        Javalin app = Javalin.create();
+        var app = Javalin.create();
 
         app.before(ctx -> ctx.contentType("text/html; charset=utf-8"));
 
-        app.get(NamedRoutes.rootPath(), RootController::index);
-
-        app.post(NamedRoutes.urlsPath(), UrlController::create);
-        app.get(NamedRoutes.urlsPath(), UrlController::index);
-
-        app.get(NamedRoutes.urlPath("{id}"), UrlController::show);
-
-        app.post(NamedRoutes.checksPath("{id}"), ChecksController::create);
+        CONTROLLERS.forEach(controller -> controller.route(app));
 
         return app;
     }

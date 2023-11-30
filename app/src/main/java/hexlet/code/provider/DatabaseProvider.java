@@ -1,9 +1,10 @@
-package hexlet.code.util;
+package hexlet.code.provider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.App;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.util.Environment;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -14,22 +15,27 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 @Slf4j
-public final class DataSourceHelper {
-    public static void init() throws SQLException {
-        log.info("Data source initialization start...");
+public final class DatabaseProvider {
+    public static void createConnectionPool() {
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(EnvironmentHelper.getJdbcUrl());
+        hikariConfig.setJdbcUrl(Environment.JDBC_DATABASE_URL.getValue());
 
-        HikariDataSource dataSource;
-
+        HikariDataSource connectionPool = null;
         try {
-            dataSource = new HikariDataSource(hikariConfig);
+            connectionPool = new HikariDataSource(hikariConfig);
         } catch (Exception e) {
-            log.info("Error while data source initialization, switch to in-memory database", e);
-            hikariConfig.setJdbcUrl(EnvironmentHelper.getMemJdbc());
-            dataSource = new HikariDataSource(hikariConfig);
+            log.error(String.format(
+                    """
+                            Can't create connection pool
+                            Check %s environment variable""",
+                    Environment.JDBC_DATABASE_URL.getDefinition()
+            ), e);
         }
 
+        BaseRepository.connectionPool = connectionPool;
+    }
+
+    public static void initializeDB() {
         var is = App.class.getClassLoader().getResourceAsStream("schema.sql");
 
         String sql = null;
@@ -40,10 +46,11 @@ public final class DataSourceHelper {
         }
 
         log.info(sql);
-        try (var connection = dataSource.getConnection();
+        try (var connection = BaseRepository.connectionPool.getConnection();
              var statement = connection.createStatement()) {
             statement.execute(sql);
+        } catch (SQLException e) {
+            log.error(e.getMessage());
         }
-        BaseRepository.dataSource = dataSource;
     }
 }

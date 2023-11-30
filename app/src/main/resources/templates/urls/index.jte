@@ -1,5 +1,5 @@
 @import hexlet.code.dto.urls.UrlsPage
-@import hexlet.code.util.NamedRoutes
+@import hexlet.code.controller.UrlController
 @import hexlet.code.util.DateFormatter
 @param UrlsPage page
 
@@ -24,7 +24,7 @@ content = @`
                         ${page.getUrls().get(i).getId()}
                     </td>
                     <td>
-                        <a href="${NamedRoutes.urlPath(page.getUrls().get(i).getId())}">${page.getUrls().get(i).getName()}</a>
+                        <a href="${UrlController.getINSTANCE().urlPath(page.getUrls().get(i).getId())}">${page.getUrls().get(i).getName()}</a>
                     </td>
                     <td>
                         @if(page.getUrls().get(i).getLast() != null)

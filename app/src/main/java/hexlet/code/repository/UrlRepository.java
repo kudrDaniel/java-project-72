@@ -1,6 +1,7 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.Url;
+import hexlet.code.util.exception.UrlSavingException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
@@ -11,15 +12,17 @@ import java.util.Optional;
 
 @Slf4j
 public final class UrlRepository extends BaseRepository {
-    public static void save(Url url) {
+    public static void save(Url url) throws UrlSavingException {
         var sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             var name = url.getName();
             if (findByName(name).isPresent()) {
-                throw new IllegalStateException(String.format("Entity with name=%s already exists", name));
+                throw new UrlSavingException(
+                        String.format("Entity with name=%s already exists", name),
+                        UrlSavingException.State.URL_EXISTS
+                );
             }
-
             preparedStatement.setString(1, name);
             preparedStatement.setTimestamp(2, url.getCreatedAt());
             preparedStatement.executeUpdate();
@@ -30,7 +33,7 @@ public final class UrlRepository extends BaseRepository {
             } else {
                 throw new SQLException("DB have not returned keys after saving an entity");
             }
-        } catch (IllegalStateException e) {
+        } catch (UrlSavingException e) {
             log.error("Url with same name exists", e);
             throw e;
         } catch (SQLException e) {
@@ -40,7 +43,7 @@ public final class UrlRepository extends BaseRepository {
 
     public static Optional<Url> findById(Long id) {
         var sql = "SELECT * FROM urls WHERE id = ?";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
 
@@ -62,7 +65,7 @@ public final class UrlRepository extends BaseRepository {
 
     public static Optional<Url> findByName(String name) {
         var sql = "SELECT * FROM urls WHERE name = ?";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setString(1, name);
 
@@ -84,7 +87,7 @@ public final class UrlRepository extends BaseRepository {
 
     public static List<Url> getEntities() {
         var sql = "SELECT * FROM urls";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             var resultSet = preparedStatement.executeQuery();
 

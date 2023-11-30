@@ -1,10 +1,14 @@
 package hexlet.code.dto;
 
-import lombok.AllArgsConstructor;
+import hexlet.code.provider.FlashProvider.Flash;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public final class RootPage extends BasePage {
-    private String url;
+    private final String url;
+
+    public RootPage(Flash flash, String url) {
+        super(flash);
+        this.url = url;
+    }
 }

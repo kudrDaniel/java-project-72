@@ -14,7 +14,7 @@ public class CheckRepository extends BaseRepository {
     public static void save(Check check) {
         var sql = "INSERT INTO url_checks (url_id, status_code, title, h1, description, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, check.getUrlId());
             preparedStatement.setInt(2, check.getStatus());
@@ -37,7 +37,7 @@ public class CheckRepository extends BaseRepository {
 
     public static Optional<Check> getLastByUrlId(Long urlId) {
         var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY id DESC LIMIT 1";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
 
@@ -62,7 +62,7 @@ public class CheckRepository extends BaseRepository {
 
     public static List<Check> getEntitiesByUrlId(Long urlId) {
         var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY id ASC";
-        try (var conn = dataSource.getConnection();
+        try (var conn = connectionPool.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setLong(1, urlId);
 

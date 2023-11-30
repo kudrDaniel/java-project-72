@@ -3,11 +3,11 @@ package hexlet.code.util;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class EnvironmentHelper {
+public class Envs {
     public static final String PORT_ENV = "PORT";
     public static final String DB_ENV = "JDBC_DATABASE_URL";
 
-    static final String PORT_DEF = "7090";
+    static final String PORT_DEF = "7080";
 
     public static int getPort() {
         String raw = System.getenv().getOrDefault(PORT_ENV, PORT_DEF);
@@ -24,13 +24,13 @@ public class EnvironmentHelper {
     }
 
     public static String getJdbcUrl() {
-        if (System.getProperty("dev_tests", "false").equals("true")) {
+        if (System.getProperty("DEVELOPMENT", "false").equals("true")) {
             return getMemJdbc();
         }
         return System.getenv().getOrDefault(DB_ENV, getMemJdbc());
     }
 
     public static String getMemJdbc() {
-        return "jdbc:h2:mem:seo_page";
+        return "jdbc:h2:mem:seo_page_dev";
     }
 }
