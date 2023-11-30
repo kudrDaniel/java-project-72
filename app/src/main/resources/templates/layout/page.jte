@@ -31,9 +31,9 @@
     </div>
 </nav>
 <main class="flex-grow-1">
-    @if(page != null && page.getFlash().getFlashType() != null && page.getFlash().getFlashMessage() != null)
-        <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlash().getFlashType()}" role="alert">
-            <p class="m-0">${page.getFlash().getFlashMessage()}</p>
+    @if(page != null && page.getFlash().type() != null && page.getFlash().message() != null)
+        <div class="rounded-0 m-0 alert alert-dismissible fade show ${page.getFlash().type()}" role="alert">
+            <p class="m-0">${page.getFlash().message()}</p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif

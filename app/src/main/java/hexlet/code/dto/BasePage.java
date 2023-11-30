@@ -1,11 +1,13 @@
 package hexlet.code.dto;
 
-import hexlet.code.util.Flash;
+import hexlet.code.provider.FlashProvider.Flash;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class BasePage {
-    private Flash flash;
+    private final Flash flash;
+
+    public BasePage(Flash flash) {
+        this.flash = flash;
+    }
 }

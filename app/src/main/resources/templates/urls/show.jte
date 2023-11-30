@@ -1,6 +1,6 @@
 @import hexlet.code.dto.urls.UrlPage
 @import hexlet.code.util.DateFormatter
-@import hexlet.code.util.NamedRoutes
+@import hexlet.code.controller.ChecksController
 @param UrlPage page
 
 @template.layout.page(
@@ -27,7 +27,7 @@ content = @`
         </table>
 
         <h2 class="mt-5">Проверки</h2>
-        <form method="post" action="${NamedRoutes.checksPath(page.getUrl().getId())}">
+        <form method="post" action="${ChecksController.getINSTANCE().checksPath(page.getUrl().getId())}">
             <button type="submit" class="btn btn-primary">Запустить проверку</button>
         </form>
 

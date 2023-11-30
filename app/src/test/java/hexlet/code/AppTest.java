@@ -49,11 +49,11 @@ class AppTest {
 
     @BeforeEach
     public void setUp() throws IOException, SQLException {
-        System.setProperty("dev_tests", "true");
+        System.setProperty("DEVELOPMENT", "true");
         app = App.getApp();
 
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:h2:mem:seo_page");
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:seo_page_dev");
 
         dataSource = new HikariDataSource(hikariConfig);
 
