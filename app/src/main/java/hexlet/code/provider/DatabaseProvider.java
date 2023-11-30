@@ -5,7 +5,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.App;
 import hexlet.code.repository.BaseRepository;
 import hexlet.code.util.Environment;
-import hexlet.code.util.Envs;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public final class DatabaseProvider {
     public static void createConnectionPool() {
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(Envs.getJdbcUrl());
+        hikariConfig.setJdbcUrl(Environment.JDBC_DATABASE_URL.getValue());
 
         HikariDataSource connectionPool = null;
         try {

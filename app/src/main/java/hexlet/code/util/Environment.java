@@ -8,6 +8,17 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public abstract class Environment<T> {
+    public static final Environment<Boolean> DEVELOPMENT = new Environment<>(
+            "DEVELOPMENT", false) {
+        @Override
+        Optional<Boolean> getEnv(String def) {
+            if (System.getProperty(def).equals("true")) {
+                return Optional.of(true);
+            }
+            return Optional.empty();
+        }
+    };
+
     public static final Environment<Integer> PORT = new Environment<>(
             "PORT", 7080) {
         @Override
@@ -39,17 +50,6 @@ public abstract class Environment<T> {
             } else {
                 return Optional.of(value);
             }
-        }
-    };
-
-    public static final Environment<Boolean> DEVELOPMENT = new Environment<>(
-            "DEVELOPMENT", false) {
-        @Override
-        Optional<Boolean> getEnv(String def) {
-            if (System.getProperty(def).equals("true")) {
-                return Optional.of(true);
-            }
-            return Optional.empty();
         }
     };
 
