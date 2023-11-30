@@ -31,7 +31,8 @@ public final class RootController implements Routed {
                 ctx.consumeSessionAttribute("flashType"),
                 ctx.consumeSessionAttribute("flashMessage")
         );
-        var page = new RootPage(flash, "");
+        var url = ctx.queryParamAsClass("url", String.class).getOrDefault("");
+        var page = new RootPage(flash, url);
         ctx.render("index.jte", Collections.singletonMap("page", page));
     }
 

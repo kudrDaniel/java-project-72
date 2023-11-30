@@ -1,6 +1,5 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.RootPage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
@@ -86,9 +85,9 @@ public final class UrlController implements Routed {
             switch (e.getState()) {
                 case URL_INCORRECT -> {
                     log.error("Error occurred while parsing url: {}", rawUrl, e);
-                    var flash = new Flash(FlashProvider.ALERT_DANGER, "Некорректный URL");
-                    var page = new RootPage(flash, rawUrl);
-                    ctx.render("index.jte", Collections.singletonMap("page", page));
+                    ctx.sessionAttribute("flashType", FlashProvider.ALERT_DANGER);
+                    ctx.sessionAttribute("flashMessage", "Некорректный URL");
+                    ctx.redirect(RootController.getINSTANCE().rootPath() + "?url=" + rawUrl);
                 }
                 case URL_EXISTS -> {
                     ctx.sessionAttribute("flashType", FlashProvider.ALERT_INFO);
