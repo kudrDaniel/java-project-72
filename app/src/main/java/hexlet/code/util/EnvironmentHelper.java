@@ -24,10 +24,13 @@ public class EnvironmentHelper {
     }
 
     public static String getJdbcUrl() {
+        if (System.getProperty("dev_tests", "false").equals("true")) {
+            return getMemJdbc();
+        }
         return System.getenv().getOrDefault(DB_ENV, getMemJdbc());
     }
 
     public static String getMemJdbc() {
-        return "jdbc:h2:mem:project";
+        return "jdbc:h2:mem:seo_page";
     }
 }

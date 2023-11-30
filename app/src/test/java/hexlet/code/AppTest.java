@@ -50,11 +50,11 @@ class AppTest {
 
     @BeforeEach
     public void setUp() throws IOException, SQLException {
+        System.setProperty("dev_tests", "true");
         app = App.getApp();
 
         var hikariConfig = new HikariConfig();
-        var jdbcDatabaseUrl = EnvironmentHelper.getJdbcUrl();
-        hikariConfig.setJdbcUrl(jdbcDatabaseUrl);
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:seo_page");
 
         dataSource = new HikariDataSource(hikariConfig);
 
@@ -144,9 +144,6 @@ class AppTest {
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isTrue();
                     assertThat(resultSet.getString("name")).isEqualTo(expectedUrl);
-                } catch (SQLException e) {
-                    log.error(e.getSQLState(), e);
-                    throw e;
                 }
             });
         }
@@ -178,9 +175,6 @@ class AppTest {
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isTrue();
                     assertThat(resultSet.next()).isFalse();
-                } catch (SQLException e) {
-                    log.error(e.getSQLState(), e);
-                    throw e;
                 }
             });
         }
@@ -204,9 +198,6 @@ class AppTest {
                     preparedStatement.setString(1, inputUrl);
                     var resultSet = preparedStatement.executeQuery();
                     assertThat(resultSet.next()).isFalse();
-                } catch (SQLException e) {
-                    log.error(e.getSQLState(), e);
-                    throw e;
                 }
             });
         }
